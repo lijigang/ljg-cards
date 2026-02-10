@@ -1,0 +1,12 @@
+{
+  "name": "ljg-cards",
+  "version": "1.0.0",
+  "description": "Reading card generator — text to beautiful 1200x1600 PNG cards",
+  "type": "commonjs",
+  "keywords": ["claude-code", "skill", "cards", "reading", "png"],
+  "author": "lijigang",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}
