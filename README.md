@@ -1,65 +1,98 @@
 # ljg-cards
 
-A Claude Code skill that converts text into beautifully styled reading cards (1200×1600 PNG, 3:4 ratio).
+文字变阅读卡 — 一个 Claude Code Skill，将任意文本渲染为精美的 PNG 阅读卡片。
 
-```
-┌─────────────────────────┐
-│  ┌───────────────────┐  │
-│  │     Title (green)  │  │
-│  ├───────────────────┤  │
-│  │                   │  │
-│  │  Content area     │  │
-│  │  · items (yellow) │  │
-│  │  · quotes (dim)   │  │
-│  │  · sections (cyan)│  │
-│  │                   │  │
-│  ├───────────────────┤  │
-│  │ source    page    │  │
-│  └───────────────────┘  │
-│        1200 × 1600      │
-└─────────────────────────┘
-```
+## 功能
 
-## Features
+- **默认长图模式**：所有内容渲染为一张 1080px 宽的长图，高度自适应
+- **多卡模式**（`-m`）：自动按视觉重量切分为多张 1080×1440 卡片
+- **CJK 优先排版**：KingHwa_OldSong + PingFang SC，正文 36px，行高 1.7
+- **语义化结构**：标题、条目组、金句高亮、引用块、分割线，自动映射为视觉组件
+- **白色极简主题**：干净的白底黑字设计，金句左侧竖线强调
 
-- **Dark theme** — Catppuccin-inspired palette (`#272B33` card on `#1E2128` background)
-- **CJK-first typography** — PingFang SC, 26px body, 1.8 line-height
-- **Smart splitting** — greedy algorithm with visual weight calculation, auto-splits long content into multiple cards
-- **Semantic HTML** — headings, items, quotes, dividers mapped to styled components
-
-## Install
-
-### As Claude Code plugin
+## 安装
 
 ```bash
 claude plugin add lijigang/ljg-cards
 ```
 
-### Manual
+安装后需要初始化 Playwright：
 
 ```bash
-git clone https://github.com/lijigang/ljg-cards.git ~/.claude/plugins/ljg-cards
-cd ~/.claude/plugins/ljg-cards
-npm install
-npx playwright install chromium
+cd ~/.claude/skills/ljg-cards && npm install && npx playwright install chromium
 ```
 
-## Usage
-
-In Claude Code:
+## 使用
 
 ```
-/ljg-cards
-把这段文字做成卡片：...
+/ljg-cards [文本或文件路径]
 ```
 
-Trigger phrases: `做成卡片`, `生成阅读卡`, `reading card`, `卡片`
+默认生成一张长图。添加 `-m` 参数切换为多卡模式：
 
-## Output
+```
+/ljg-cards -m [文本或文件路径]
+```
 
-PNG files saved to `~/Downloads/card_{timestamp}_{N}.png`
+触发短语：`做成卡片`、`生成阅读卡`、`reading card`、`卡片`
 
-## Dependencies
+## 输出
+
+PNG 文件保存到 `~/Downloads/`。
+
+### 默认模式
+
+一张长图，宽 1080px，高度由内容撑开：
+
+```
++---------------------------+
+|                           |
+|   标题（84px 粗体）        |
+|   ───                     |
+|                           |
+|   正文段落                 |
+|                           |
+|   ┃ 金句高亮（40px）       |
+|                           |
+|   条目标题                 |
+|   条目正文（灰色）         |
+|                           |
+|   ─────────────────       |
+|   logo  来源               |
++---------------------------+
+       1080px × auto
+```
+
+### 多卡模式（`-m`）
+
+自动切分为多张 1080×1440 卡片，带页码和续页标题：
+
+```
++------------------+  +------------------+
+|   标题            |  |   续页标题（灰）   |
+|   ───            |  |                  |
+|   内容 ...       |  |   内容 ...       |
+|                  |  |                  |
+|  logo 来源 1/3   |  |  logo 来源 2/3   |
++------------------+  +------------------+
+```
+
+## 视觉重量算法（多卡模式）
+
+切分基于视觉重量而非字符数：
+
+| 元素 | 权重系数 |
+|------|---------|
+| 普通段落 | 字符数 × 1.4 |
+| 标题 h1 | 字符数 × 6.0 |
+| 金句 `.highlight` | 字符数 × 3.0 |
+| 条目组 `.item` | 字符数 × 1.8 |
+| 引用块 | 字符数 × 1.7 |
+| 分割线 | 固定 60 |
+
+每卡阈值约 380 视觉重量单位，在段落/章节边界切分。
+
+## 依赖
 
 - Node.js
 - Playwright (Chromium)

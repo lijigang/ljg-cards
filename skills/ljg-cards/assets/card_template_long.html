@@ -16,30 +16,15 @@
 
   html, body {
     width: 1080px;
-    height: 1440px;
-    overflow: hidden;
     background: #FFFFFF;
   }
 
   .card {
     width: 1080px;
-    height: 1440px;
     background: #FFFFFF;
     padding: 64px 72px 52px;
     display: flex;
     flex-direction: column;
-  }
-
-  /* ── Running title (continuation cards) ── */
-  .header {
-    flex-shrink: 0;
-    margin-bottom: 40px;
-  }
-
-  .header .running-title {
-    font: 400 24px/1.5 var(--font);
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
   }
 
   /* ── Title ── */
@@ -65,8 +50,6 @@
 
   /* ── Content ── */
   .content {
-    flex: 1;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -154,7 +137,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: auto;
+    margin-top: 52px;
     padding-top: 22px;
     border-top: 1px solid var(--rule);
   }
@@ -177,17 +160,10 @@
     color: var(--text-mid);
     letter-spacing: 0.03em;
   }
-
-  .footer .page-info {
-    font: 400 20px/1.5 var(--font);
-    color: var(--text-dim);
-    letter-spacing: 0.03em;
-  }
 </style>
 </head>
 <body>
   <div class="card">
-    {{HEADER_BLOCK}}
     {{TITLE_BLOCK}}
     <div class="content">
       {{BODY_HTML}}
@@ -197,7 +173,6 @@
         <img class="avatar" src="file:///Users/lijigang/.claude/skills/ljg-cards/assets/logo.png" alt="">
         <span class="author-name">{{SOURCE}}</span>
       </div>
-      <span class="page-info">{{PAGE_INFO}}</span>
     </div>
   </div>
 </body>

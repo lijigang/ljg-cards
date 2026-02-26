@@ -1,7 +1,7 @@
 {
   "name": "ljg-cards",
-  "description": "Reading card generator — converts text into beautifully styled 1200x1600 PNG cards with dark theme, automatic content splitting, and CJK typography support.",
-  "version": "1.0.0",
+  "description": "Reading card generator — converts text into beautifully styled PNG reading cards. Supports single long-form card (1080px wide, auto height) and multi-card mode (1080x1440 per card).",
+  "version": "2.0.0",
   "author": {
     "name": "lijigang"
   },

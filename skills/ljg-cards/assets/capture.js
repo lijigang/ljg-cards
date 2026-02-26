@@ -8,9 +8,10 @@ async function main() {
   const outputPath = args[1];
   const width = parseInt(args[2]) || 1200;
   const height = parseInt(args[3]) || 1600;
+  const fullpage = args[4] === 'fullpage';
 
   if (!htmlPath || !outputPath) {
-    console.error('Usage: node capture.js <html> <png> [width] [height]');
+    console.error('Usage: node capture.js <html> <png> [width] [height] [fullpage]');
     process.exit(1);
   }
 
@@ -24,17 +25,28 @@ async function main() {
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  await page.setViewportSize({ width, height });
+  await page.setViewportSize({ width, height: fullpage ? 800 : height });
 
   const fileUrl = 'file://' + path.resolve(htmlPath);
   await page.goto(fileUrl, { waitUntil: 'networkidle' });
   await page.waitForTimeout(500);
 
-  await page.screenshot({
-    path: path.resolve(outputPath),
-    type: 'png',
-    clip: { x: 0, y: 0, width, height }
-  });
+  if (fullpage) {
+    const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
+    await page.setViewportSize({ width, height: bodyHeight });
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.resolve(outputPath),
+      type: 'png',
+      clip: { x: 0, y: 0, width, height: bodyHeight }
+    });
+  } else {
+    await page.screenshot({
+      path: path.resolve(outputPath),
+      type: 'png',
+      clip: { x: 0, y: 0, width, height }
+    });
+  }
 
   await browser.close();
   console.log('OK: ' + path.resolve(outputPath));
